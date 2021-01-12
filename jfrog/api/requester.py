@@ -7,7 +7,7 @@ class Requester:
     TOKEN_URI = "api/security/token"
     TOKEN_REVOKE_URI = f"{TOKEN_URI}/revoke"
 
-    TOKEN_DURATION_SECONDS = "5"
+    TOKEN_DURATION_SECONDS = "60
 
     @property
     def host(self):
