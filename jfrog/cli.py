@@ -1,5 +1,6 @@
 import click
 from .api import Api
+from .utils import normalize_host
 
 API = "API"
 USERNAME = "USERNAME"
@@ -28,21 +29,27 @@ HOST = "HOST"
 @click.pass_context
 def cli(ctx, host, jfrog_username, jfrog_password):
     """Jfrog saas instance cli"""
+
+    normalized_host = normalize_host(host)
+    
     ctx.ensure_object(dict)
-    ctx.obj[HOST] = host
+    ctx.obj[HOST] = normalized_host
     ctx.obj[USERNAME] = jfrog_username
-    ctx.obj[API] = Api(host, jfrog_username, jfrog_password)
+    ctx.obj[API] = Api(normalized_host, jfrog_username, jfrog_password)
 
 
 @cli.group()
 @click.pass_context
 def system(ctx):
+    """System commands"""
     pass
 
 
 @system.command(name="ping")
 @click.pass_context
 def system_ping(ctx):
+    """Ping system, ensuring saas instance is up"""
+    
     click.echo(f"pinging {ctx.obj[HOST]}...")
     ok = ctx.obj.get(API).system.ping()
     if ok:
@@ -55,6 +62,7 @@ def system_ping(ctx):
 @system.command(name="version")
 @click.pass_context
 def system_version(ctx):
+    """Get system version and addons"""
     response = ctx.obj.get(API).system.version()
 
     version = response["version"]
@@ -73,12 +81,14 @@ def system_version(ctx):
 @cli.group()
 @click.pass_context
 def storage(ctx):
+    """Commands for managing storaqe"""
     pass
 
 
 @storage.command(name="info")
 @click.pass_context
 def storage_info(ctx):
+    """Get storage usage summary for various storage types"""
     info = ctx.obj.get(API).storage.info()
     print(info)
 
@@ -86,6 +96,7 @@ def storage_info(ctx):
 @cli.group()
 @click.pass_context
 def user(ctx):
+    """Manage users"""
     pass
 
 
@@ -98,6 +109,7 @@ def user(ctx):
 @click.option("--groups", default=None, help="comma separated list of groups to place user in")
 @click.pass_context
 def user_create(ctx, username: str, email: str, password: str, admin: bool, ui_access: bool, groups: str):
+    """Create a new user"""
     if groups is not None:
         groups = groups.split(',')
 
@@ -112,6 +124,7 @@ def user_create(ctx, username: str, email: str, password: str, admin: bool, ui_a
 @click.option("--username", required=True, help="name of user to delete")
 @click.pass_context
 def user_delete(ctx, username):
+    """Delete a user"""
     click.echo(f"Attempting to delete user {username}...")
 
     ctx.obj.get(API).user.delete(username)

@@ -12,11 +12,13 @@ requirements = [
 
 setup(
     name="jfrog",
-    version="3.0.0",
+    version="4.0.0",
     author="Noam Dolovich",
     packages=find_packages(),
     author_email="noam.tzvi.dolovich@gmail.com",
     description="Jfrog cli home assignment",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     install_requires=requirements,
     extras_require={"dev": ["wheel", "pytest", "flake8", "autopep8", "black"]},
     entry_points={"console_scripts": ["jfrog-saas = jfrog.cli:cli"]},
