@@ -1,6 +1,6 @@
-.PHONY: test unittests lint
+.PHONY: test deploy build dev lint
 
-deploy:
+deploy: test
 	python setup.py bdist_wheel upload -r local
 
 test: lint
@@ -9,7 +9,7 @@ test: lint
 build: lint
 	pip3 install '.'
 
-dev: lint
+dev:
 	pip3 install -e '.[dev]'
 
 lint:
